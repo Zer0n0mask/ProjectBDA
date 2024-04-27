@@ -13,7 +13,7 @@ fi
 touch "$LOCK_FILE"
 
 # Change directory to your project folder
-cd /home/MySQL/ProjectBDA
+cd /home/daniel/Documents/MySQL/ProjectBDA
 
 # Display the SSH public key
 cat ~/.ssh/id_rsa.pub
@@ -29,7 +29,7 @@ do
 
     # Push changes to GitHub
     echo "------------Starting to push to Github------------"
-    git push git@github.com:JustLokust/<Projectname> master
+    git push origin master
     echo "------------Finished pushing to Github------------"
 
     # Wait for 300 seconds (5 minutes)
