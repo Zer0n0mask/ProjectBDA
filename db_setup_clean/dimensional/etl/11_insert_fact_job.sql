@@ -19,7 +19,7 @@ SELECT
     salary, 
     work_area, 
     position, 
-    location, 
+    IFNULL(location,"Not Available") as location, 
     sd.idDate AS StartDateId, 
     FLOOR(DATEDIFF(j.final_date, j.start_date) / 30) AS tenure_months, 
     idCompany, 

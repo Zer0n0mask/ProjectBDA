@@ -23,7 +23,7 @@ SELECT
         ELSE "Services"
 	END AS Payment_Class,
 	s.type, 
-	s.Graduate_idGraduate, 
+	s.idGraduate, 
 	s.idAdministrativeDependency, 
 	s.idDepartment 
 FROM grad_db.studentsupport AS s;

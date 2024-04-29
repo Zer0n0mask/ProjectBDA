@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `grad_dimensional`.`dim_administrativedependency` (
   `name` VARCHAR(100) NOT NULL,
   `faculty_name` VARCHAR(150) NULL DEFAULT NULL,
   `university_name` VARCHAR(150) NOT NULL,
-  `campus_name` VARCHAR(150) NOT NULL,
+  `campus_name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id_administrativedependency`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `grad_dimensional`.`dim_department` (
   `idDepartment` INT NOT NULL,
   `department_name` VARCHAR(150) NOT NULL,
   `faculty_name` VARCHAR(150) NOT NULL,
-  `campus_name` VARCHAR(150) NULL,
+  `campus_name` VARCHAR(45) NULL,
   `university_name` VARCHAR(150) NOT NULL,
   `country` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`idDepartment`))
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS `grad_dimensional`.`dim_graduate` (
   `name` VARCHAR(45) NOT NULL,
   `lastname` VARCHAR(45) NOT NULL,
   `gender` ENUM('M', 'F', 'Other') NOT NULL,
-  `ethnics` VARCHAR(45) NULL DEFAULT NULL,
+  `ethnics` VARCHAR(150) NULL DEFAULT NULL,
   `pbm` INT NULL DEFAULT NULL,
   `stratum` VARCHAR(45) NULL DEFAULT NULL,
   `birthday` DATE NULL DEFAULT NULL,
@@ -144,7 +144,7 @@ CREATE TABLE IF NOT EXISTS `grad_dimensional`.`dim_program` (
   `programDuration` VARCHAR(45) NOT NULL,
   `department_name` VARCHAR(150) NOT NULL,
   `faculty_name` VARCHAR(150) NOT NULL,
-  `campus_name` VARCHAR(150) NULL,
+  `campus_name` VARCHAR(45) NULL,
   `university_name` VARCHAR(150) NOT NULL,
   `country` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`idProgram`),
@@ -163,7 +163,7 @@ CREATE TABLE IF NOT EXISTS `grad_dimensional`.`dim_groupassociation` (
   `idGroupAssociation` INT NOT NULL AUTO_INCREMENT,
   `type` ENUM('Seminary', 'Student Group', 'Research Group', 'Other') NOT NULL,
   `name` VARCHAR(80) NOT NULL,
-  `knowledgeArea` VARCHAR(45) NOT NULL,
+  `knowledgeArea` VARCHAR(150) NOT NULL,
   PRIMARY KEY (`idGroupAssociation`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 21
@@ -199,6 +199,9 @@ CREATE TABLE IF NOT EXISTS `grad_dimensional`.`fact_academicwork` (
   `idDate_publication` INT NULL DEFAULT NULL,
   `idProgram` INT NULL DEFAULT NULL,
   `idProfessor` INT NULL,
+  `idDegreeWork` INT NULL,
+  `idResearchWork` INT NULL,
+  `idPublication` INT NULL,
   PRIMARY KEY (`idResPubDeg`),
   INDEX `fk_fact_res_pub_deg_dim_groupAssociation_idx` (`idGroupAssociation` ASC) VISIBLE,
   INDEX `fk_fact_res_pub_deg_dim_date2_idx` (`idDate_publication` ASC) VISIBLE,
@@ -245,71 +248,6 @@ DEFAULT CHARACTER SET = utf8mb3;
 
 
 -- -----------------------------------------------------
--- Table `grad_dimensional`.`fact_service`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `grad_dimensional`.`fact_service` ;
-
-CREATE TABLE IF NOT EXISTS `grad_dimensional`.`fact_service` (
-  `idService` INT NOT NULL AUTO_INCREMENT,
-  `type` ENUM('Curso', 'Charla', 'Préstamo de material bibliográfico', 'Bases de datos', 'Oferta de empleo') NOT NULL,
-  `location` VARCHAR(250) NULL DEFAULT NULL,
-  `valueService_USD` INT NOT NULL,
-  `description` VARCHAR(500) NOT NULL,
-  `knowledge_area` VARCHAR(45) NULL DEFAULT NULL,
-  `duration_days` INT NULL,
-  `idAdministrativedependency` INT NULL DEFAULT NULL,
-  `idGroupAssociation` INT NULL DEFAULT NULL,
-  `idDepartment` INT NULL DEFAULT NULL,
-  `idEmploymentOffer` INT NULL DEFAULT NULL,
-  `idStartDate` INT NULL DEFAULT NULL,
-  PRIMARY KEY (`idService`),
-  INDEX `fk_fact_service_dim_administrativedependency1_idx` (`idAdministrativedependency` ASC) VISIBLE,
-  INDEX `fk_fact_service_dim_groupAssociation1_idx` (`idGroupAssociation` ASC) VISIBLE,
-  INDEX `fk_fact_service_dim_department1_idx` (`idDepartment` ASC) VISIBLE,
-  INDEX `fk_fact_service_dim_employmentOffer1_idx` (`idEmploymentOffer` ASC) VISIBLE,
-  INDEX `fk_fact_service_dim_date1_idx` (`idStartDate` ASC) VISIBLE,
-  CONSTRAINT `fk_fact_service_dim_administrativedependency1`
-    FOREIGN KEY (`idAdministrativedependency`)
-    REFERENCES `grad_dimensional`.`dim_administrativedependency` (`id_administrativedependency`),
-  CONSTRAINT `fk_fact_service_dim_date1`
-    FOREIGN KEY (`idStartDate`)
-    REFERENCES `grad_dimensional`.`dim_date` (`idDate`),
-  CONSTRAINT `fk_fact_service_dim_department1`
-    FOREIGN KEY (`idDepartment`)
-    REFERENCES `grad_dimensional`.`dim_department` (`idDepartment`),
-  CONSTRAINT `fk_fact_service_dim_employmentOffer1`
-    FOREIGN KEY (`idEmploymentOffer`)
-    REFERENCES `grad_dimensional`.`dim_employmentoffer` (`id_employmentOffer`),
-  CONSTRAINT `fk_fact_service_dim_groupAssociation1`
-    FOREIGN KEY (`idGroupAssociation`)
-    REFERENCES `grad_dimensional`.`dim_groupassociation` (`idGroupAssociation`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 32
-DEFAULT CHARACTER SET = utf8mb3;
-
-
--- -----------------------------------------------------
--- Table `grad_dimensional`.`dim_graduate_has_fact_service`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `grad_dimensional`.`dim_graduate_has_fact_service` ;
-
-CREATE TABLE IF NOT EXISTS `grad_dimensional`.`dim_graduate_has_fact_service` (
-  `dim_graduate_idGraduate` INT NOT NULL,
-  `fact_service_idService` INT NOT NULL,
-  PRIMARY KEY (`dim_graduate_idGraduate`, `fact_service_idService`),
-  INDEX `fk_dim_graduate_has_fact_service_fact_service1_idx` (`fact_service_idService` ASC) VISIBLE,
-  INDEX `fk_dim_graduate_has_fact_service_dim_graduate1_idx` (`dim_graduate_idGraduate` ASC) VISIBLE,
-  CONSTRAINT `fk_dim_graduate_has_fact_service_dim_graduate1`
-    FOREIGN KEY (`dim_graduate_idGraduate`)
-    REFERENCES `grad_dimensional`.`dim_graduate` (`idGraduate`),
-  CONSTRAINT `fk_dim_graduate_has_fact_service_fact_service1`
-    FOREIGN KEY (`fact_service_idService`)
-    REFERENCES `grad_dimensional`.`fact_service` (`idService`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb3;
-
-
--- -----------------------------------------------------
 -- Table `grad_dimensional`.`fact_job`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `grad_dimensional`.`fact_job` ;
@@ -345,6 +283,50 @@ CREATE TABLE IF NOT EXISTS `grad_dimensional`.`fact_job` (
     REFERENCES `grad_dimensional`.`dim_graduate` (`idGraduate`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 16
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `grad_dimensional`.`fact_service`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `grad_dimensional`.`fact_service` ;
+
+CREATE TABLE IF NOT EXISTS `grad_dimensional`.`fact_service` (
+  `idService` INT NOT NULL,
+  `type` ENUM('Curso', 'Charla', 'Préstamo de material bibliográfico', 'Bases de datos', 'Oferta de empleo') NOT NULL,
+  `location` VARCHAR(250) NULL DEFAULT NULL,
+  `valueService_USD` INT NOT NULL,
+  `description` VARCHAR(500) NOT NULL,
+  `knowledge_area` VARCHAR(45) NULL DEFAULT NULL,
+  `duration_days` INT NULL,
+  `idAdministrativedependency` INT NULL DEFAULT NULL,
+  `idGroupAssociation` INT NULL DEFAULT NULL,
+  `idDepartment` INT NULL DEFAULT NULL,
+  `idEmploymentOffer` INT NULL DEFAULT NULL,
+  `idStartDate` INT NULL DEFAULT NULL,
+  INDEX `fk_fact_service_dim_administrativedependency1_idx` (`idAdministrativedependency` ASC) VISIBLE,
+  INDEX `fk_fact_service_dim_groupAssociation1_idx` (`idGroupAssociation` ASC) VISIBLE,
+  INDEX `fk_fact_service_dim_department1_idx` (`idDepartment` ASC) VISIBLE,
+  INDEX `fk_fact_service_dim_employmentOffer1_idx` (`idEmploymentOffer` ASC) VISIBLE,
+  INDEX `fk_fact_service_dim_date1_idx` (`idStartDate` ASC) VISIBLE,
+  PRIMARY KEY (`idService`),
+  CONSTRAINT `fk_fact_service_dim_administrativedependency1`
+    FOREIGN KEY (`idAdministrativedependency`)
+    REFERENCES `grad_dimensional`.`dim_administrativedependency` (`id_administrativedependency`),
+  CONSTRAINT `fk_fact_service_dim_date1`
+    FOREIGN KEY (`idStartDate`)
+    REFERENCES `grad_dimensional`.`dim_date` (`idDate`),
+  CONSTRAINT `fk_fact_service_dim_department1`
+    FOREIGN KEY (`idDepartment`)
+    REFERENCES `grad_dimensional`.`dim_department` (`idDepartment`),
+  CONSTRAINT `fk_fact_service_dim_employmentOffer1`
+    FOREIGN KEY (`idEmploymentOffer`)
+    REFERENCES `grad_dimensional`.`dim_employmentoffer` (`id_employmentOffer`),
+  CONSTRAINT `fk_fact_service_dim_groupAssociation1`
+    FOREIGN KEY (`idGroupAssociation`)
+    REFERENCES `grad_dimensional`.`dim_groupassociation` (`idGroupAssociation`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 32
 DEFAULT CHARACTER SET = utf8mb3;
 
 
@@ -393,20 +375,19 @@ CREATE TABLE IF NOT EXISTS `grad_dimensional`.`fact_DegreeWork` (
   `avgAcademicHistory` DECIMAL(2,1) NULL DEFAULT NULL,
   `UniqueIdentifier` VARCHAR(300) NULL DEFAULT NULL,
   `idGroupAssociation` INT NULL DEFAULT NULL,
-  `idDate_publication` INT NULL DEFAULT NULL,
+  `idDate_defense` INT NULL DEFAULT NULL,
   `idProgram` INT NULL DEFAULT NULL,
   `idProfessor` INT NULL,
   PRIMARY KEY (`idDegreeWork`),
   INDEX `fk_fact_res_pub_deg_dim_groupAssociation_idx` (`idGroupAssociation` ASC) VISIBLE,
-  INDEX `fk_fact_res_pub_deg_dim_date2_idx` (`idDate_publication` ASC) VISIBLE,
+  INDEX `fk_fact_res_pub_deg_dim_date2_idx` (`idDate_defense` ASC) VISIBLE,
   INDEX `fk_academicWork_dim_program1_idx` (`idProgram` ASC) VISIBLE,
   INDEX `fk_fact_DegreeWork_dim_professor1_idx` (`idProfessor` ASC) VISIBLE,
-  UNIQUE INDEX `UniqueIdentifier_UNIQUE` (`UniqueIdentifier` ASC) VISIBLE,
   CONSTRAINT `fk_academicWork_dim_program10`
     FOREIGN KEY (`idProgram`)
     REFERENCES `grad_dimensional`.`dim_program` (`idProgram`),
   CONSTRAINT `fk_fact_res_pub_deg_dim_date20`
-    FOREIGN KEY (`idDate_publication`)
+    FOREIGN KEY (`idDate_defense`)
     REFERENCES `grad_dimensional`.`dim_date` (`idDate`),
   CONSTRAINT `fk_fact_res_pub_deg_dim_groupAssociation0`
     FOREIGN KEY (`idGroupAssociation`)
@@ -428,24 +409,18 @@ DROP TABLE IF EXISTS `grad_dimensional`.`fact_ResearchWork` ;
 
 CREATE TABLE IF NOT EXISTS `grad_dimensional`.`fact_ResearchWork` (
   `idResearch` INT NOT NULL AUTO_INCREMENT,
-  `type` ENUM('Article', 'Proceeding', 'Other') NOT NULL,
+  `type` ENUM('Article', 'Presentation', 'Other') NOT NULL,
   `title` VARCHAR(200) NOT NULL,
   `description` VARCHAR(1000) NOT NULL,
   `knowledge_area` VARCHAR(45) NULL DEFAULT NULL,
   `UniqueIdentifier` VARCHAR(300) NULL,
   `idGroupAssociation` INT NULL DEFAULT NULL,
   `idDate_publication` INT NULL DEFAULT NULL,
-  `idProgram` INT NULL DEFAULT NULL,
   `idProfessor` INT NULL,
   PRIMARY KEY (`idResearch`),
   INDEX `fk_fact_res_pub_deg_dim_groupAssociation_idx` (`idGroupAssociation` ASC) VISIBLE,
   INDEX `fk_fact_res_pub_deg_dim_date2_idx` (`idDate_publication` ASC) VISIBLE,
-  INDEX `fk_academicWork_dim_program1_idx` (`idProgram` ASC) VISIBLE,
   INDEX `fk_fact_ResearchWork_dim_professor1_idx` (`idProfessor` ASC) VISIBLE,
-  UNIQUE INDEX `UniqueIdentifier_UNIQUE` (`UniqueIdentifier` ASC) VISIBLE,
-  CONSTRAINT `fk_academicWork_dim_program100`
-    FOREIGN KEY (`idProgram`)
-    REFERENCES `grad_dimensional`.`dim_program` (`idProgram`),
   CONSTRAINT `fk_fact_res_pub_deg_dim_date200`
     FOREIGN KEY (`idDate_publication`)
     REFERENCES `grad_dimensional`.`dim_date` (`idDate`),
@@ -496,7 +471,6 @@ DROP TABLE IF EXISTS `grad_dimensional`.`fact_Publication_has_dim_graduate` ;
 CREATE TABLE IF NOT EXISTS `grad_dimensional`.`fact_Publication_has_dim_graduate` (
   `fact_Publication_idPublication` INT NOT NULL,
   `dim_graduate_idGraduate` INT NOT NULL,
-  PRIMARY KEY (`fact_Publication_idPublication`, `dim_graduate_idGraduate`),
   INDEX `fk_fact_Publication_has_dim_graduate_dim_graduate1_idx` (`dim_graduate_idGraduate` ASC) VISIBLE,
   INDEX `fk_fact_Publication_has_dim_graduate_fact_Publication1_idx` (`fact_Publication_idPublication` ASC) VISIBLE,
   CONSTRAINT `fk_fact_Publication_has_dim_graduate_fact_Publication1`
@@ -521,7 +495,6 @@ DROP TABLE IF EXISTS `grad_dimensional`.`fact_DegreeWork_has_dim_graduate` ;
 CREATE TABLE IF NOT EXISTS `grad_dimensional`.`fact_DegreeWork_has_dim_graduate` (
   `fact_DegreeWork_idDegreeWork` INT NOT NULL,
   `dim_graduate_idGraduate` INT NOT NULL,
-  PRIMARY KEY (`fact_DegreeWork_idDegreeWork`, `dim_graduate_idGraduate`),
   INDEX `fk_fact_DegreeWork_has_dim_graduate_dim_graduate1_idx` (`dim_graduate_idGraduate` ASC) VISIBLE,
   INDEX `fk_fact_DegreeWork_has_dim_graduate_fact_DegreeWork1_idx` (`fact_DegreeWork_idDegreeWork` ASC) VISIBLE,
   CONSTRAINT `fk_fact_DegreeWork_has_dim_graduate_fact_DegreeWork1`
@@ -546,7 +519,6 @@ DROP TABLE IF EXISTS `grad_dimensional`.`fact_ResearchWork_has_dim_graduate` ;
 CREATE TABLE IF NOT EXISTS `grad_dimensional`.`fact_ResearchWork_has_dim_graduate` (
   `fact_ResearchWork_idResearch` INT NOT NULL,
   `dim_graduate_idGraduate` INT NOT NULL,
-  PRIMARY KEY (`fact_ResearchWork_idResearch`, `dim_graduate_idGraduate`),
   INDEX `fk_fact_ResearchWork_has_dim_graduate_dim_graduate1_idx` (`dim_graduate_idGraduate` ASC) VISIBLE,
   INDEX `fk_fact_ResearchWork_has_dim_graduate_fact_ResearchWork1_idx` (`fact_ResearchWork_idResearch` ASC) VISIBLE,
   CONSTRAINT `fk_fact_ResearchWork_has_dim_graduate_fact_ResearchWork1`
@@ -557,6 +529,30 @@ CREATE TABLE IF NOT EXISTS `grad_dimensional`.`fact_ResearchWork_has_dim_graduat
   CONSTRAINT `fk_fact_ResearchWork_has_dim_graduate_dim_graduate1`
     FOREIGN KEY (`dim_graduate_idGraduate`)
     REFERENCES `grad_dimensional`.`dim_graduate` (`idGraduate`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `grad_dimensional`.`dim_graduate_has_fact_service`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `grad_dimensional`.`dim_graduate_has_fact_service` ;
+
+CREATE TABLE IF NOT EXISTS `grad_dimensional`.`dim_graduate_has_fact_service` (
+  `dim_graduate_idGraduate` INT NOT NULL,
+  `fact_service_idService` INT NOT NULL,
+  INDEX `fk_dim_graduate_has_fact_service_fact_service1_idx` (`fact_service_idService` ASC) VISIBLE,
+  INDEX `fk_dim_graduate_has_fact_service_dim_graduate1_idx` (`dim_graduate_idGraduate` ASC) VISIBLE,
+  CONSTRAINT `fk_dim_graduate_has_fact_service_dim_graduate1`
+    FOREIGN KEY (`dim_graduate_idGraduate`)
+    REFERENCES `grad_dimensional`.`dim_graduate` (`idGraduate`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_dim_graduate_has_fact_service_fact_service1`
+    FOREIGN KEY (`fact_service_idService`)
+    REFERENCES `grad_dimensional`.`fact_service` (`idService`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB

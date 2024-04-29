@@ -1,6 +1,3 @@
-USE grad_db;
-USE grad_dimensional;
-
 DELETE FROM grad_dimensional.dim_graduate_has_fact_service;
 ALTER TABLE grad_dimensional.dim_graduate_has_fact_service AUTO_INCREMENT = 1 ;
 

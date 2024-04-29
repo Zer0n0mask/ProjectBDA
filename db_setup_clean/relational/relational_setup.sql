@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `grad_db`.`Graduate` (
   `name` VARCHAR(45) NOT NULL,
   `lastname` VARCHAR(45) NOT NULL,
   `gender` ENUM('M', 'F', 'Other') NOT NULL,
-  `ethnics` VARCHAR(45) NULL,
+  `ethnics` VARCHAR(200) NULL,
   `pbm` INT NULL,
   `stratum` VARCHAR(45) NULL,
   `birthday` DATE NULL,
@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS `grad_db`.`DegreeWork` (
   `idDegreeWork` INT NOT NULL AUTO_INCREMENT,
   `type` ENUM('BAPI', 'Thesis', 'Degree Work', 'Other') NOT NULL,
   `title` VARCHAR(200) NOT NULL,
-  `knwolegde_area` VARCHAR(45) NOT NULL,
+  `knowledge_area` VARCHAR(45) NOT NULL,
   `description` VARCHAR(1000) NULL,
   `defense_date` DATE NOT NULL,
   `idGraduateHasProgram` INT NOT NULL,
@@ -192,8 +192,8 @@ DROP TABLE IF EXISTS `grad_db`.`GroupAssociation` ;
 CREATE TABLE IF NOT EXISTS `grad_db`.`GroupAssociation` (
   `idGroupAssociation` INT NOT NULL AUTO_INCREMENT,
   `type` ENUM('Seminary', 'Student Group', 'Research Group', 'Other') NOT NULL,
-  `name` VARCHAR(45) NOT NULL,
-  `knowledge_area` VARCHAR(45) NOT NULL,
+  `name` VARCHAR(200) NOT NULL,
+  `knowledge_area` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`idGroupAssociation`))
 ENGINE = InnoDB;
 
@@ -253,7 +253,7 @@ DROP TABLE IF EXISTS `grad_db`.`Publication` ;
 
 CREATE TABLE IF NOT EXISTS `grad_db`.`Publication` (
   `idPublication` INT NOT NULL AUTO_INCREMENT,
-  `journal` VARCHAR(45) NULL,
+  `journal` VARCHAR(200) NULL,
   `dateOfPublication` DATE NULL,
   `Knowledge_area` VARCHAR(45) NULL,
   `idResearchWork` INT NULL,
@@ -375,7 +375,7 @@ DROP TABLE IF EXISTS `grad_db`.`Job` ;
 
 CREATE TABLE IF NOT EXISTS `grad_db`.`Job` (
   `idJob` INT NOT NULL AUTO_INCREMENT,
-  `type` ENUM('Entrepeneur', 'Contractort', 'Employeed', 'Unemployeed') NULL,
+  `type` ENUM('Entrepeneur', 'Contractor', 'Employeed', 'Unemployeed') NULL,
   `salary` INT NULL,
   `start_date` DATE NOT NULL,
   `final_date` DATE NULL,
@@ -416,16 +416,16 @@ CREATE TABLE IF NOT EXISTS `grad_db`.`StudentSupport` (
   `idStudentSupport` INT NOT NULL AUTO_INCREMENT,
   `isExternal` TINYINT NULL,
   `isMonetaryRetributed` TINYINT NULL,
-  `type` ENUM('SocioEconómico vivienda', 'SocioEconómico transporte', 'SocioEconómico alimentación', 'Beca promedio', 'Auxiliar docente', 'Movilidad saliente internacional', 'Publicación de artículos académicos', 'Estudiante auxiliar', 'Monitor') NULL,
-  `Graduate_idGraduate` INT NULL,
+  `type` ENUM('SocioEconómico vivienda', 'SocioEconómico transporte', 'SocioEconómico alimentación', 'Beca promedio', 'Auxiliar docente', 'Movilidad saliente internacional', 'Publicación de artículos académicos', 'Estudiante auxiliar', 'Monitor') NOT NULL,
+  `idGraduate` INT NULL,
   `idAdministrativeDependency` INT NOT NULL,
   `idDepartment` INT NULL,
   PRIMARY KEY (`idStudentSupport`),
-  INDEX `fk_StudentSupport_Graduate1_idx` (`Graduate_idGraduate` ASC) VISIBLE,
+  INDEX `fk_StudentSupport_Graduate1_idx` (`idGraduate` ASC) VISIBLE,
   INDEX `fk_StudentSupport_AdministrativeDependency1_idx` (`idAdministrativeDependency` ASC) VISIBLE,
   INDEX `fk_StudentSupport_Department1_idx` (`idDepartment` ASC) VISIBLE,
   CONSTRAINT `fk_StudentSupport_Graduate1`
-    FOREIGN KEY (`Graduate_idGraduate`)
+    FOREIGN KEY (`idGraduate`)
     REFERENCES `grad_db`.`Graduate` (`idGraduate`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
