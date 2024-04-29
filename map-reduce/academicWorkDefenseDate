@@ -1,0 +1,12 @@
+// academicWork with defense after a certain date
+
+db.academicWork.aggregate([
+  {
+    $match: {
+      defenseDate: {
+        $gt: ISODate("2024-04-30T00:00:00Z"),
+      },
+    },
+  },
+])
+

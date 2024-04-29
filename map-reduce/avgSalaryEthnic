@@ -1,0 +1,24 @@
+// avgSalary of graduate per ethnicity
+
+db.graduate.aggregate([
+  {
+    $unwind: "$jobs",
+  },
+  {
+    $match: {
+      "jobs.salary": {
+        $exists: true,
+      },
+    },
+  },
+  {
+    $group: {
+      _id: “$ethnic”,
+      averageSalary: {
+        $avg: "$jobs.salary",
+      },
+    },
+  },
+])
+
+

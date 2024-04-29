@@ -1,0 +1,11 @@
+// Find documents where the title contains a specific keyword (case-insensitive) and the defense date is before a certain date
+
+db.researchwork.aggregate([
+  {
+    $match: {
+      title: { $regex: "fundamental d", $options: "i" },
+      defenseDate: { $lt: ISODate("2024-04-29T05:35:34.000Z") }
+    }
+  }
+])
+
