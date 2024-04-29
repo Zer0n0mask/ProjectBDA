@@ -81,3 +81,14 @@ db.<collection>.getShardDistribution()
 ```
 sh.status()
 ```
+
+## Cargar datos de un JSON a una colección
+
+El siguiente comando de debe ejecutar por fuera del contenedor,
+parados en la misma posición donde se encuentra el archivo docker-compose.yaml.
+
+```
+docker-compose exec router01 mongoimport -d <db_name> -c <collection_name> --file <filepath> --jsonArray
+```
+
+> El filepath es el path relativo desde el router.
