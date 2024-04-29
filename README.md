@@ -22,3 +22,6 @@ Estos archivos se usan para poblar la base de datos NoSQL de Mongo.
 
 ## sharding 
 En esta carpeta se encuentran los archivos para realizar el sharding de la base de datos, junto con la explicación de cómo se ejecutó y realizó todo.
+
+## map-reduce
+Se encuentran algunos archivos para realizar análisis relevantes en la base de datos siguiendo una lógica mapreduce por medio de los aggregation pipelines de Mongo.
