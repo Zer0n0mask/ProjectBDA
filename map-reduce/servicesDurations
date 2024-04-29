@@ -1,0 +1,34 @@
+// Services per duration ranges
+
+db.service.aggregate([
+  {
+    $project: {
+      duration: {
+        $cond: {
+          if: { $lt: [{ $subtract: ["$finalDate", "$startDate"] }, 1000*60*60*24] },
+          then: "less than 1 day",
+          else: {
+            $cond: {
+              if: { $lt: [{ $subtract: ["$finalDate", "$startDate"] }, 1000*60*60*24*7] },
+              then: "less than 1 week",
+              else: {
+                $cond: {
+                  if: { $lt: [{ $subtract: ["$finalDate", "$startDate"] }, 1000*60*60*24*15] },
+                  then: "less than 15 days",
+                  else: "more than or equal to 15 days"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    $group: {
+      _id: "$duration",
+      count: { $sum: 1 }
+    }
+  }
+])
+

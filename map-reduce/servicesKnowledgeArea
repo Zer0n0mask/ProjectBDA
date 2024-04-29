@@ -1,0 +1,20 @@
+// Services per knwoledgeArea
+
+db.service.aggregate([
+  {
+    $group: {
+      _id: "$knowledgeArea",
+      count: {
+        $sum: 1,
+      },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      knowledgeArea: "$_id",
+      count: 1,
+    },
+  },
+])
+
