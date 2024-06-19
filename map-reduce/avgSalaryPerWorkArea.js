@@ -36,13 +36,13 @@ var aggregationPipeline = [
     }
   },
   {
-    "$out": "newCollection"
+    "$out": newCollection
   }
 ];
 //------------------------------------------------------------------Change depending on pipeline
 
 // Connect to the MongoDB database
-const db = connect('mongodb://localhost:27017/db_grad_mongo');
+const db = connect('mongodb://localhost:27017/grad');
 
 // Function to check if a collection exists
 function collectionExists(db, collectionName) {
